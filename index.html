@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friend Game Hub</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #e8f0e8;
+      color: #354d3b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .screen {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .box {
+      width: 360px;
+      max-width: 100%;
+      background: white;
+      padding: 35px;
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #666;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 10px;
+      background: #6f8f72;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5d7c60;
+    }
+
+    .error {
+      color: #c0392b;
+      display: none;
+      margin-top: 10px;
+    }
+
+    #name-screen,
+    #hub-screen {
+      display: none;
+    }
+
+    .hub {
+      width: 100%;
+      max-width: 950px;
+    }
+
+    .header {
+      background: white;
+      padding: 22px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header h1 {
+      margin: 0;
+    }
+
+    .header button {
+      width: auto;
+      padding: 10px 16px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: white;
+      padding: 22px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+    }
+
+    .friend {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      gap: 10px;
+    }
+
+    .friend:last-child {
+      border-bottom: none;
+    }
+
+    .friend-name {
+      flex: 1;
+      text-align: left;
+    }
+
+    .online-dot {
+      color: #42a85f;
+      margin-right: 4px;
+    }
+
+    .request-button {
+      width: auto;
+      padding: 8px 10px;
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .game-card {
+      padding: 18px;
+      border: 1px solid #e4e4e4;
+      border-radius: 14px;
+      margin-bottom: 15px;
+    }
+
+    .game-card h3 {
+      margin-top: 0;
+    }
+
+    .coming-soon {
+      color: #777;
+      font-size: 14px;
+    }
+
+    .notice {
+      background: #eef5ee;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 15px;
+      color: #4d624f;
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .header button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PASSWORD SCREEN -->
+  <div class="screen" id="password-screen">
+    <div class="box">
+      <h1>🎮 Friend Game Hub</h1>
+      <p>Enter the group password to continue.</p>
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter password"
+      >
+
+      <button onclick="checkPassword()">Enter</button>
+
+      <div class="error" id="password-error">
+        Incorrect password.
+      </div>
+    </div>
+  </div>
+
+  <!-- NAME SCREEN -->
+  <div class="screen" id="name-screen">
+    <div class="box">
+      <h1>👤 Choose Your Name</h1>
+      <p>Pick your name to enter the Game Hub.</p>
+
+      <button onclick="chooseName('Graham')">Graham</button>
+      <button onclick="chooseName('Meara')">Meara</button>
+      <button onclick="chooseName('Annabelle')">Annabelle</button>
+      <button onclick="chooseName('Elsie')">Elsie</button>
+      <button onclick="chooseName('Adalyn')">Adalyn</button>
+    </div>
+  </div>
+
+  <!-- GAME HUB -->
+  <div class="screen" id="hub-screen">
+    <div class="hub">
+
+      <div class="header">
+        <div>
+          <h1>🎮 Friend Game Hub</h1>
+          <div id="welcome"></div>
+        </div>
+
+        <button onclick="logout()">Log Out</button>
+      </div>
+
+      <div class="content">
+
+        <!-- ONLINE FRIENDS -->
+        <div class="panel">
+          <h2>🟢 Online Friends</h2>
+
+          <div class="friend">
+            <div class="friend-name">
+              <span class="online-dot">●</span> Graham
+            </div>
+            <button class="request-button" onclick="requestPlay('Graham')">
+              Play
+            </button>
+          </div>
+
+          <div class="friend">
+            <div class="friend-name">
+              <span class="online-dot">●</span> Meara
+            </div>
+            <button class="request-button" onclick="requestPlay('Meara')">
+              Play
+            </button>
+          </div>
+
+          <div class="friend">
+            <div class="friend-name">
+              <span class="online-dot">●</span> Annabelle
+            </div>
+            <button class="request-button" onclick="requestPlay('Annabelle')">
+              Play
+            </button>
+          </div>
+
+          <div class="friend">
+            <div class="friend-name">
+              <span class="online-dot">●</span> Elsie
+            </div>
+            <button class="request-button" onclick="requestPlay('Elsie')">
+              Play
+            </button>
+          </div>
+
+          <div class="friend">
+            <div class="friend-name">
+              <span class="online-dot">●</span> Adalyn
+            </div>
+            <button class="request-button" onclick="requestPlay('Adalyn')">
+              Play
+            </button>
+          </div>
+
+          <div class="notice" id="notice"></div>
+        </div>
+
+        <!-- GAMES -->
+        <div class="panel">
+          <h2>🕹️ Games</h2>
+
+          <div class="game-card">
+            <h3>⭕ Tic-Tac-Toe</h3>
+            <p>Challenge a friend to a game of Tic-Tac-Toe.</p>
+            <button onclick="startGame('Tic-Tac-Toe')">
+              Choose Game
+            </button>
+          </div>
+
+          <div class="game-card">
+            <h3>✊ Rock Paper Scissors</h3>
+            <p>Quick games against your friends.</p>
+            <button onclick="startGame('Rock Paper Scissors')">
+              Choose Game
+            </button>
+          </div>
+
+          <div class="game-card">
+            <h3>🧠 Quiz Battle</h3>
+            <p class="coming-soon">
+              Coming soon.
+            </p>
+          </div>
+
+          <div class="game-card">
+            <h3>🎯 More Games</h3>
+            <p class="coming-soon">
+              We'll add more games later.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GROUP_PASSWORD = "co33games";
+
+    let currentUser = "";
+
+    function checkPassword() {
+      const entered = document.getElementById("password").value;
+      const error = document.getElementById("password-error");
+
+      if (entered === GROUP_PASSWORD) {
+        document.getElementById("password-screen").style.display = "none";
+        document.getElementById("name-screen").style.display = "flex";
+        error.style.display = "none";
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    function chooseName(name) {
+      currentUser = name;
+
+      document.getElementById("name-screen").style.display = "none";
+      document.getElementById("hub-screen").style.display = "flex";
+
+      document.getElementById("welcome").textContent =
+        "Welcome, " + currentUser + "!";
+    }
+
+    function requestPlay(friendName) {
+      const notice = document.getElementById("notice");
+
+      if (friendName === currentUser) {
+        notice.textContent = "You can't request yourself to play!";
+      } else {
+        notice.textContent =
+          "Play request sent to " + friendName + "!";
+      }
+
+      notice.style.display = "block";
+    }
+
+    function startGame(gameName) {
+      const notice = document.getElementById("notice");
+      notice.textContent =
+        gameName + " will be added to the Game Hub soon!";
+      notice.style.display = "block";
+    }
+
+    function logout() {
+      currentUser = "";
+
+      document.getElementById("hub-screen").style.display = "none";
+      document.getElementById("name-screen").style.display = "none";
+      document.getElementById("password-screen").style.display = "flex";
+
+      document.getElementById("password").value = "";
+      document.getElementById("password-error").style.display = "none";
+      document.getElementById("notice").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
